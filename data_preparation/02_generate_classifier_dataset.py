@@ -9,7 +9,7 @@ import pathlib
 import numpy as np
 import pandas as pd
 
-
+INTERMEDIATE_DIR = pathlib.Path("./data/intermediate")
 OUTPUT_DIR = pathlib.Path("./data/output")
 if not OUTPUT_DIR.exists():
     os.makedirs(OUTPUT_DIR)
@@ -18,7 +18,7 @@ FPS = 15
 NUMBER_OF_SUBJECTS = 71
 validation_interval_in_minutes = 5 # in minutes
 
-hdf_filepath = OUTPUT_DIR.joinpath(f"{FPS}_fps_data_{NUMBER_OF_SUBJECTS}_subjects.hdf5")
+hdf_filepath = INTERMEDIATE_DIR.joinpath(f"{FPS}_fps_data_{NUMBER_OF_SUBJECTS}_subjects_.hdf5")
 
 session_1_data = pd.read_hdf(hdf_filepath,key="subject_session_idx_0")
 session_2_data = pd.read_hdf(hdf_filepath,key="subject_session_idx_1")

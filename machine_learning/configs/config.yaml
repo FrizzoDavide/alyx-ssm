@@ -3,6 +3,7 @@
 # specify here default training configuration
 defaults:
   - trainer: default.yaml
+  - tuner: default.yaml
   - model: MISSING
   - datamodule: MISSING
   - lightning_module: classification_module.yaml
@@ -24,7 +25,7 @@ defaults:
 work_dir: ${hydra:runtime.cwd}
 
 # path to folder with data
-data_dir: ${work_dir}/data/
+data_dir: /mnt/disk1/datasets/alyx
 
 # use `python run.py debug=true` for easy debugging!
 # this will run 1 train, val and test loop with only 1 batch

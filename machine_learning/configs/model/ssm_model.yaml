@@ -1,0 +1,6 @@
+_target_: src.models.ssm.src.models.S5Model
+
+defaults:
+  - hyperparameters: ssm_hyperparameters.yaml
+
+num_out_classes: MISSING

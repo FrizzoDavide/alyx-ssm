@@ -1,0 +1,6 @@
+# only for auxliary purposes
+scale_batch_size:
+  enabled: True
+  mode: power
+  #init_val: 30000 # handled by datamodule config
+  max_trials: 8

@@ -1,5 +1,5 @@
 import json
-from collections import Mapping
+from collections.abc import Mapping
 from typing import Dict, Union, Any
 
 import numpy as np
@@ -197,11 +197,15 @@ class BaseDataset(torch.utils.data.Dataset):
 
                     if self.data_hyperparameters.data_encoding.requires_acceleration_computation():
                         log.info(f"computing acceleration data")
-                        frames = compute_velocities_for_position_and_rotations(frames, frame_step_size=self.frame_step_size, change_idxs=change_idxs)
+                        frames = compute_velocities_for_position_and_rotations(frames, frame_step_size=self.frame_step_size, change_idxs=change_idxs).to_numpy()
 
                         if self.data_hyperparameters.data_encoding.requires_jerk_computation():
                             log.info(f"computing jerk data")
                             frames = compute_velocities_for_position_and_rotations(frames, frame_step_size=self.frame_step_size, change_idxs=change_idxs)
+                    else:
+                        frames = frames.to_numpy()
+                else:
+                    frames = frames.to_numpy()
 
         if self.data_hyperparameters.use_6d_rotation:
             frames = process_rotation_to_6d_representation(frames)
@@ -219,7 +223,7 @@ class BaseDataset(torch.utils.data.Dataset):
         self.frame_idx = data_df.frame_idx
         self.take_id = data_df.take_id
         self.frames = frames
-        assert len(frames.index) == len(np.unique(frames.index))
+        #assert len(frames.index) == len(np.unique(frames.index))
 
     @property
     def data_stats(self):

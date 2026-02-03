@@ -22,6 +22,7 @@ class ClassificationModule(pl.LightningModule):
         self.hyperparameters = model.hparams.__dict__
         self.model = model
         self.save_hyperparameters()
+        self.validation_step_outputs = []
         self.best_logged_metrics = defaultdict(lambda: np.nan)
 
         # the Lightning Trainer#tune expects "batch_size" to be set, even though we don't need it here
@@ -42,7 +43,11 @@ class ClassificationModule(pl.LightningModule):
         })
         for metric in metrics:
             self.metrics[f"{metric['dataset']}_metrics"][metric["name"]] = initialize_metric(metric["name"], num_out_classes=self.model.num_out_classes)
-
+    
+    def on_fit_start(self):
+        if self.loss_weights is not None:
+            self.loss_weights = self.loss_weights.to(self.device).to(self.dtype)
+    
     def forward(self, X):
         return self.model.forward(X)
 
@@ -52,11 +57,11 @@ class ClassificationModule(pl.LightningModule):
 
         h = self.forward(X)
 
-        loss = F.cross_entropy(h, y, weight=self.loss_weights.to(self.device).to(self.dtype)).mean()
+        loss = F.cross_entropy(h, y, weight=self.loss_weights).mean()
         self.log(f"loss/{DatasetPurpose.TRAIN.value}", loss, on_step=False, on_epoch=True)
 
         for metric_name, metric_fn in self.metrics[f"{DatasetPurpose.TRAIN.value}_metrics"].items():
-            self.log(f"{metric_name}/{DatasetPurpose.TRAIN.value}", metric_fn.cpu()(h.cpu(), y.cpu()), on_step=False, on_epoch=True)
+            self.log(f"{metric_name}/{DatasetPurpose.TRAIN.value}", metric_fn(h, y), on_step=False, on_epoch=True)
 
         return loss
 
@@ -73,16 +78,18 @@ class ClassificationModule(pl.LightningModule):
         y = batch["targets"].long()
 
         h = self.forward(X)
-        return h, y
+
+        self.validation_step_outputs.append((h.detach().cpu(), y.detach().cpu()))
     
     @torch.no_grad()
-    def validation_epoch_end(self, validation_step_outputs):
+    def on_validation_epoch_end(self):
         # concat h and y from all steps
-        h = torch.cat([h_ for h_, y_ in validation_step_outputs])
-        y = torch.cat([y_ for h_, y_ in validation_step_outputs])
-        dataset = self.trainer.val_dataloaders[0].dataset
+        h = torch.cat([h_ for h_, y_ in self.validation_step_outputs])
+        y = torch.cat([y_ for h_, y_ in self.validation_step_outputs])
+        self.validation_step_outputs.clear()
+        dataset = self.trainer.val_dataloaders.dataset
         if hasattr(dataset, "loss_weights"):
-            val_loss_weights = torch.from_numpy(dataset.loss_weights).float().to(self.device).to(self.dtype)
+            val_loss_weights = torch.from_numpy(dataset.loss_weights).float().to(self.dtype)
         else:
             val_loss_weights = None
         loss = F.cross_entropy(h, y, weight=val_loss_weights).mean()
@@ -91,11 +98,10 @@ class ClassificationModule(pl.LightningModule):
 
         torch.use_deterministic_algorithms(False)
         for metric_name, metric_fn in self.metrics[f"{DatasetPurpose.VALIDATION.value}_metrics"].items():
-            self.log(f"{metric_name}/{DatasetPurpose.VALIDATION.value}", metric_fn(preds, y), on_step=False, on_epoch=True, prog_bar=metric_name == Metrics.MIN_ACCURACY.value)
+            self.log(f"{metric_name}/{DatasetPurpose.VALIDATION.value}", metric_fn.cpu()(preds, y), on_step=False, on_epoch=True, prog_bar=metric_name == Metrics.MIN_ACCURACY.value)
 
         torch.use_deterministic_algorithms(True)
         self._note_best_metric_values()
-        return loss
 
     def _note_best_metric_values(self):
         for metric_name, value in self.trainer.logged_metrics.items():

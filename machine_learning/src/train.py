@@ -11,6 +11,7 @@ from pytorch_lightning import (
     seed_everything,
 )
 from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.tuner import Tuner
 
 from src.callbacks.log_best_metrics_callback import LogBestMetrics
 from src.callbacks.user_halt_callback import UserHaltCallback
@@ -46,6 +47,9 @@ def train(config: DictConfig) -> Optional[float]:
     if "seed" in config:
         log.info(f"seeding everything to {config.seed}")
         seed_everything(config.seed, workers=True)
+
+    # Set torch matmul precision
+    torch.set_float32_matmul_precision("high")    
 
     # Init lightning datamodule
     if config.get("cache_datamodule", False):
@@ -83,14 +87,23 @@ def train(config: DictConfig) -> Optional[float]:
             callbacks=callbacks,
             logger=loggers,
     )
-    if config.trainer.auto_scale_batch_size:
+    
+    # Init lightning trainer
+    log.info(f"Instantiating tuner")
+    tuner: Tuner = Tuner(
+            trainer=trainer,
+    )
+
+    if config.tuner.scale_batch_size.enabled:
         # Figure out batch size so we can utilize the GPU as well as possible
         log.info(f"batch size was {datamodule.train_dataloader().batch_size}")
         log.info("starting batch size tuning")
 
         new_batch_size = custom_batch_size_tuner(sample_shape=datamodule.train_dataset.sample_shape,
                                                  initial_batch_size=datamodule.batch_size,
-                                                 trainer=trainer,
+                                                 max_trials=config.tuner.scale_batch_size.max_trials,
+                                                 mode=config.tuner.scale_batch_size.mode,
+                                                 tuner=tuner,
                                                  lightning_model=identifier)
         config.datamodule.batch_size = datamodule.batch_size = new_batch_size
 

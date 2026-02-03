@@ -1,12 +1,12 @@
 # @package _global_
 
 defaults:
-  - override /model: cnn_model.yaml
+  - override /model: ssm_model.yaml
   - override /datamodule: window_datamodule.yaml
   - override /lightning_module: classification_module.yaml
   - override /callbacks: cnn_classification.yaml
 
-run_group: cnn_bra
+run_group: ssm_br
 
 cache_datamodule: False
 
@@ -14,41 +14,45 @@ seed: 42
 
 logger:
   wandb:
-    project: "Who-Is-Alyx"
+    project: "Alyx-S5"
     entity: ""
 
 trainer:
   #gpus: 1 # deprecated
   accelerator: gpu
   devices: 1
-  min_epochs: 30
-  max_epochs: 30
+  min_epochs: 3
+  max_epochs: 3
   #auto_scale_batch_size: True # deprecated
   check_val_every_n_epoch: 1
 
 tuner:
   scale_batch_size:
-    enabled: True
+    enabled: False
     mode: "power"
     #init_val: 16 # handled by datamodule config
     max_trials: 8
 
 model:
   num_out_classes: "auto"
-  window_size: ${datamodule.data_hyperparameters.window_size}
   hyperparameters:
-    num_layers: 4
-    activation: LeakyReLU
-    channels_factor: 1
-    conv_stride: 1
-    dropout: 0.44
-    initial_channel_size: 600
-    kernel_size: 3
-    max_pool_size: 2
+    hidden_size: 256
+    num_layers: 6
+    d_state: 512
+    num_head_layers: 2
+    k: 2
+    dropout: 0.2
+    bidir: False
+    gap: True
+    loss_type: CE
+    task: "classification"
+    head_act: "leakyRelu"
+    ff_dropout: 0.1
+    attn_dropout: 0.1
 
 datamodule:
   data_path: ${data_dir}/15_fps_classifier_71_subjects.hdf5
-  batch_size: 200
+  batch_size: 512
 
   dataset_kwargs:
     debug_mode: False
@@ -61,8 +65,8 @@ datamodule:
     fps: 15
     window_size: 300
     data_encoding:
-      value: "body_relative_acceleration"
+      value: "body_relative"
 
 lightning_module:
   optimizer_options:
-    lr: 0.002
+    lr: 0.0005

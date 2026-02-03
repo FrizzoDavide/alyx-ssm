@@ -1,0 +1,25 @@
+_target_: src.models.ssm.src.models.ModelConfig
+
+hidden_size: MISSING
+num_layers: MISSING
+num_head_layers: MISSING
+dropout: MISSING
+device: MISSING
+gap: False
+loss_type: MISSING
+
+# Model head
+k: MISSING
+task: MISSING
+head_act: "relu"
+
+# S4D or S5-specific
+d_state: MISSING
+
+# S4D-specific
+act: MISSING
+
+# S5-specific
+bidir: False
+ff_dropout: MISSING
+attn_dropout: MISSING

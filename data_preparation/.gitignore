@@ -1,3 +1,4 @@
 .idea
 data/**/*.hdf5
 data/**/*.csv
+data/

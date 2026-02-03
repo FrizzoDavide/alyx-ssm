@@ -4,7 +4,7 @@ from torch import nn
 
 from src.models._cnn_layer import CNNLayer
 from src.hyperparameters.cnn_hyperparameters import CNNHyperparameters
-from src.utils.normalization_helper import normalize_embedding
+#from src.utils.normalization_helper import normalize_embedding
 
 class CNNModel(nn.Module):
     def __init__(self, hyperparameters: CNNHyperparameters, num_features: int, window_size: int, num_out_classes: int,
@@ -33,7 +33,7 @@ class CNNModel(nn.Module):
         x = x.transpose(1, 2)
         x = self.ops(x)
 
-        if self.hparams.normalize_model_outputs:
-            x = normalize_embedding(x)
+        #if self.hparams.normalize_model_outputs:
+        #    x = normalize_embedding(x)
 
         return x
