@@ -25,6 +25,8 @@ from src.utils.custom_batch_size_tuner import custom_batch_size_tuner
 from src.wandb.helpers import upload_config_and_checkpoints_to_wandb, is_wandb_logger_enabled
 from src.custom_metrics.accuracy_calculator import MotionAccuracyCalculator
 
+from calflops import calculate_flops
+
 log = utils.get_logger(__name__)
 
 
@@ -83,6 +85,9 @@ def test(config: DictConfig, path_to_model: str) -> Optional[float]:
     all_knn_labels = []
     all_query_labels = []
 
+    correct = 0
+    total = 0
+
     log.info("Running inference on test set")
 
     with torch.no_grad():
@@ -95,6 +100,10 @@ def test(config: DictConfig, path_to_model: str) -> Optional[float]:
 
             all_knn_labels.append(knn.cpu())
             all_query_labels.append(y.cpu())
+
+            preds = torch.argmax(logits, dim=1)
+            correct += (preds == y).sum().item()
+            total += y.size(0)
 
     knn_labels = torch.cat(all_knn_labels, dim=0)       # [N, K] (k number of candidates)
     query_labels = torch.cat(all_query_labels, dim=0)   # [N]
@@ -126,11 +135,28 @@ def test(config: DictConfig, path_to_model: str) -> Optional[float]:
     file_handler = logging.FileHandler(log_file, mode="a")
     log.addHandler(file_handler)
     
+    # Model static profiling (with calflops)
+    log.info("==== Model static profiling (with calflops) ====")
+    flops, macs, params = static_profile(model, device="cuda", input_shape=(1, 300, datamodule.test_dataset.num_features))
+    log.info(f"FLOPs: {flops / 1e9:.4f} GFLOPs, MACs: {macs / 1e9:.4f} GMACs, Params: {params}")
+
     # Print results
     log.info("===== Motion Accuracy Results =====")
 
     # Results for CSV
     results = []
+
+    # Sample accuracy
+    accuracy = correct / total
+    
+    log.info(f"Sample Accuracy: {accuracy:.4f}")
+    results.append({
+        "model_path": config.model._target_,
+        "category": "sample",
+        "time_window": "20_secs",
+        "metric": "accuracy",
+        "value": float(accuracy)
+    })
 
     # Sequence metrics
     for mins in sequence_lengths_minutes:
@@ -240,3 +266,28 @@ def _set_seeds(config):
     if config.datamodule.get("seed") == "random":
         config.datamodule.seed = np.random.randint(0, 1000)
     return config
+
+
+def static_profile(model, device="cuda", input_shape=(1, 300, 18)):
+    """
+    Profiles a PyTorch model using calflops.
+
+    Args:
+        model (torch.nn.Module): model to benchmark
+        device (str): "cuda" (default) or "cpu"
+        input_shape (tuple): input shape for samples in batch (batch, time, features)
+
+    Returns:
+        flops, macs, params
+    """
+    model = model.to(device)
+    model.eval()
+
+    flops, macs, params = calculate_flops(
+        model=model,
+        input_shape=input_shape,
+        output_as_string=False,
+        print_results=False
+    )
+
+    return flops, macs, params
