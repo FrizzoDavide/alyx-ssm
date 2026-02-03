@@ -1,0 +1,56 @@
+# @package _global_
+
+defaults:
+  - override /model: rnn_model.yaml
+  - override /datamodule: window_datamodule.yaml
+
+run_group: lstm_bra
+
+cache_datamodule: True
+
+seed: 42
+
+logger:
+  wandb:
+    project: "Who-Is-Alyx"
+    entity: ""
+
+datamodule:
+  data_path: ${data_dir}/15_fps_classifier_71_subjects.hdf5
+  batch_size: 1600
+  dataset_kwargs:
+    coordinate_system:
+      forward: "x"
+      right: "z"
+      up: "y"
+  data_hyperparameters:
+    original_fps: 15
+    fps: 15
+    window_size: 300
+    data_encoding:
+      value: "body_relative_acceleration"
+
+lightning_module:
+  optimizer_options:
+    lr: 0.0005
+
+tuner:
+  scale_batch_size:
+    enabled: False
+    mode: "power"
+    #init_val: 16 # handled by datamodule config
+    max_trials: 8
+
+trainer:
+  max_epochs: 40
+  min_epochs: 40
+  #auto_scale_batch_size: True
+  check_val_every_n_epoch: 1
+
+model:
+  num_out_classes: "auto" # is set in train.py
+  hyperparameters:
+    cell_type: "LSTM"
+    num_rnn_layers: 4
+    rnn_hidden_size: 400
+    dropout: 0.1
