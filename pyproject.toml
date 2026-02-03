@@ -29,6 +29,10 @@ dependencies = [
     "torch>=2.9.1",
     "torchvision>=0.24.1",
     "tqdm>=4.67.1",
+<<<<<<< Updated upstream
     "transformers>=5.0.0",
+=======
+    "transformer-encoder>=0.0.3",
+>>>>>>> Stashed changes
     "wandb>=0.23.1",
 ]
