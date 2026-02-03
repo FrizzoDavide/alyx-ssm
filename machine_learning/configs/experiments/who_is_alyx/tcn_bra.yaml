@@ -62,7 +62,7 @@ datamodule:
     fps: 15
     window_size: 300
     data_encoding:
-      value: "body_relative_acceleration"
+      value: "body_relative"
 
 lightning_module:
   optimizer_options:
