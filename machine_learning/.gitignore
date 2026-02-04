@@ -148,6 +148,7 @@ dmypy.json
 .autoenv
 
 outputs/
+multirun/
 .DS_Store
 
 scripts/_*
