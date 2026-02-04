@@ -37,7 +37,7 @@ model:
   num_out_classes: "auto"
   window_size: ${datamodule.data_hyperparameters.window_size}
   hyperparameters:
-    num_layers: 2
+    num_layers: 4
     activation: LeakyReLU
     channels_factor: 1
     conv_stride: 1
