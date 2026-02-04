@@ -35,6 +35,7 @@ def train(config: DictConfig) -> Optional[float]:
     """
     import wandb
     wandb.init(settings=wandb.Settings(start_method="fork"),
+               name=f'{config["logger"]["wandb"].get("name")}_seed_{config["seed"]}',
                group=config["logger"]["wandb"].get("group"),
                project=config["logger"]["wandb"].get("project"),
                entity=config["logger"]["wandb"].get("entity"),)

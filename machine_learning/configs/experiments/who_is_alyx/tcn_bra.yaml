@@ -16,12 +16,13 @@ logger:
   wandb:
     project: "Who-Is-Alyx"
     entity: ""
+    name: tcn_bra
 
 trainer:
   #gpus: 1 # deprecated
   accelerator: gpu
   devices: 1
-  min_epochs: 30
+  min_epochs: 5
   max_epochs: 30
   #auto_scale_batch_size: True # deprecated
   check_val_every_n_epoch: 1
@@ -37,12 +38,12 @@ model:
   num_out_classes: "auto"
   window_size: ${datamodule.data_hyperparameters.window_size}
   hyperparameters:
-    num_layers: 3
+    num_layers: 2
     activation: LeakyReLU
     channels_factor: 1
     conv_stride: 1
     dropout: 0.44
-    initial_channel_size: 300
+    initial_channel_size: 200
     kernel_size: 3
     max_pool_size: 2
     use_global_avg_pooling: True
