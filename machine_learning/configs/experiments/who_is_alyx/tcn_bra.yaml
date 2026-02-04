@@ -42,7 +42,7 @@ model:
     channels_factor: 1
     conv_stride: 1
     dropout: 0.44
-    initial_channel_size: 64
+    initial_channel_size: 600
     kernel_size: 3
     max_pool_size: 2
     use_global_avg_pooling: True
