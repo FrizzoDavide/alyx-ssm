@@ -3,10 +3,11 @@
 #SBATCH --job-name=transformer_bra_alyx_job
 #SBATCH --output=slurm_logs/transformer_bra_job_%j.txt
 #SBATCH --error=slurm_logs/transformer_bra_job_error_%j.txt
-#SBATCH --time=10:00:00
+#SBATCH --time=45:00:00
 #SBATCH --partition=pgpu_most
 #SBATCH --account=dei_most
 #SBATCH --gpus=1
+#SBATCH --mem=20G
 #SBATCH --mail-type=NONE
 #SBATCH --mail-user=davide.frizzo.1@studenti.unipd.it
 
@@ -20,8 +21,8 @@ echo "-------------------------------------------"
 echo "Starting alyx experiment"
 echo "-------------------------------------------"
 
-device_num=0
 model_name="transformer"
 data_encoding="bra"
+data_dir="/home/u0052/datasets/alyx"
 
-./run-exp $device_num "$model_name" "$data_encoding"
+./run-exp-slurm "$model_name" "$data_encoding" "$data_dir"

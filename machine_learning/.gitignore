@@ -149,6 +149,7 @@ dmypy.json
 
 outputs/
 multirun/
+slurm_logs/
 .DS_Store
 
 scripts/_*

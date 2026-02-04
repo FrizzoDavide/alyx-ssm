@@ -22,8 +22,8 @@ trainer:
   #gpus: 1 # deprecated
   accelerator: gpu
   devices: 1
-  min_epochs: 20
-  max_epochs: 20
+  min_epochs: 10
+  max_epochs: 30
   #auto_scale_batch_size: True # deprecated
   check_val_every_n_epoch: 1
 
