@@ -6,7 +6,7 @@ defaults:
   - override /lightning_module: classification_module.yaml
   - override /callbacks: cnn_classification.yaml
 
-run_group: tcn_bra
+run_group: tcn_brv
 
 cache_datamodule: False
 

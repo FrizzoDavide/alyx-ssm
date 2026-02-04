@@ -3,8 +3,10 @@
 defaults:
   - override /model: rnn_model.yaml
   - override /datamodule: window_datamodule.yaml
+  - override /lightning_module: classification_module.yaml
+  - override /callbacks: cnn_classification.yaml
 
-run_group: lstm_bra
+run_group: lstm_brv
 
 cache_datamodule: True
 
