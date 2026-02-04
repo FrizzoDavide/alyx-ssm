@@ -10,3 +10,4 @@ max_pool_size: MISSING
 activation: ReLU
 normalize_model_outputs: False
 use_global_avg_pooling: True #only for TCN
+num_downsample_layers: 0  #only for TCN

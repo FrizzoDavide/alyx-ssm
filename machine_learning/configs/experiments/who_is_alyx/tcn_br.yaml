@@ -46,7 +46,6 @@ model:
     kernel_size: 3
     max_pool_size: 2
     use_global_avg_pooling: True
-    num_downsample_layers: 2
 
 datamodule:
   data_path: ${data_dir}/15_fps_classifier_71_subjects.hdf5
@@ -63,7 +62,7 @@ datamodule:
     fps: 15
     window_size: 300
     data_encoding:
-      value: "body_relative_acceleration"
+      value: "body_relative"
 
 lightning_module:
   optimizer_options:

@@ -15,3 +15,4 @@ class CNNHyperparameters(BaseHyperparameters):
     activation: str = "ReLU"
     normalize_model_outputs: bool = False
     use_global_avg_pooling: bool = True #only for TCN
+    num_downsample_layers: int = 0  #only for TCN
