@@ -66,14 +66,12 @@ def main(config: DictConfig):
             folders = ["checkpoints"]
         )
 
-    ipdb.set_trace()
     file_strategy = os.path.join(model_checkpoint_dirpath,f"*{config.strategy}*.ckpt")
     path_to_model = glob.glob(file_strategy)[0]
 
     print("-"*50)
     print(f"Test experiment on {path_to_model} model checkpoint")
     print("-"*50)
-    ipdb.set_trace()
 
     # Test model
     return test(config, path_to_model)
