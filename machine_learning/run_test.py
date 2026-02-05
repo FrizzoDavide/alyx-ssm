@@ -20,7 +20,6 @@ dotenv.load_dotenv(override=True)
 
 log = utils.get_logger(__name__)
 
-outputs_path = Path(Path.home() / "alyx-ssm" / "machine_learning" / "multirun")
 
 @hydra.main(config_path="configs/", config_name="test_config.yaml", version_base="1.1")
 def main(config: DictConfig):
@@ -42,6 +41,8 @@ def main(config: DictConfig):
         utils.print_config(config, resolve=True)
 
     #NOTE: Automatic computation of the model checkpoint path
+
+    outputs_path = Path(Path.home() / "alyx-ssm" / "machine_learning" / "multirun")
 
     model_day_dirpath = utils.get_most_recent_dir(str(outputs_path))
     model_hour_dirpath = utils.get_most_recent_dir(model_day_dirpath)
