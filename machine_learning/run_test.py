@@ -42,24 +42,38 @@ def main(config: DictConfig):
 
     #NOTE: Automatic computation of the model checkpoint path
 
-    outputs_path = Path(Path.home() / "alyx-ssm" / "machine_learning" / "multirun")
+    ml_path = Path(Path.home() / "alyx-ssm" / "machine_learning")
 
-    model_day_dirpath = utils.get_most_recent_dir(str(outputs_path))
+    outputs_path = os.path.join(ml_path,"multirun") if config.multirun else os.path.join(ml_path,"outputs")
+
+    model_day_dirpath = utils.get_most_recent_dir(outputs_path)
     model_hour_dirpath = utils.get_most_recent_dir(model_day_dirpath)
-    model_checkpoint_dirpath = utils.generate_path(
-        basepath = model_hour_dirpath,
-        folders = [
-            str(config.run_number),
-            "checkpoints"
-        ]
-    )
 
-    file_strategy = os.path.join(model_checkpoint_dirpath,f"*{config.strategy}_val-epoch_{config.best_epoch}*.ckpt")
+    if config.multirun:
+
+        model_checkpoint_dirpath = utils.generate_path(
+            basepath = model_hour_dirpath,
+            folders = [
+                str(config.run_number),
+                "checkpoints"
+            ]
+        )
+
+    else:
+
+        model_checkpoint_dirpath = utils.generate_path(
+            basepath = model_hour_dirpath,
+            folders = ["checkpoints"]
+        )
+
+    ipdb.set_trace()
+    file_strategy = os.path.join(model_checkpoint_dirpath,f"*{config.strategy}*.ckpt")
     path_to_model = glob.glob(file_strategy)[0]
 
     print("-"*50)
     print(f"Test experiment on {path_to_model} model checkpoint")
     print("-"*50)
+    ipdb.set_trace()
 
     # Test model
     return test(config, path_to_model)

@@ -47,10 +47,9 @@ seed: 42
 
 # parameters to automatically compute the model checkpoint path
 
-outputs_path: "$HOME/alyx-ssm/machine_learning/multirun/"
+multirun: True
 run_number: 0
 strategy: "mean_accuracy"
-best_epoch: "004"
 file_pos: 0
 
-path_to_model: "/home/davide_frizzo/alyx-ssm/machine_learning/outputs/2026-02-04/TCN_bra_big_seed_42/checkpoints/best_mean_accuracy_val-epoch_001.ckpt"
+# path_to_model: "/home/davide_frizzo/alyx-ssm/machine_learning/outputs/2026-02-04/TCN_bra_big_seed_42/checkpoints/best_mean_accuracy_val-epoch_001.ckpt"
