@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-#SBATCH --job-name=transformer_bra_alyx_job
-#SBATCH --output=slurm_logs/transformer_bra_job_%j.txt
-#SBATCH --error=slurm_logs/transformer_bra_job_error_%j.txt
-#SBATCH --time=45:00:00
+#SBATCH --job-name=transformer_br_seed_2_42_alyx_job
+#SBATCH --output=slurm_logs/transformer_br_seed_2_42_job_%j.txt
+#SBATCH --error=slurm_logs/transformer_br_seed_2_42_job_error_%j.txt
+#SBATCH --time=15:00:00
 #SBATCH --partition=pgpu_most
 #SBATCH --account=dei_most
 #SBATCH --gpus=1
@@ -22,7 +22,19 @@ echo "Starting alyx experiment"
 echo "-------------------------------------------"
 
 model_name="transformer"
-data_encoding="bra"
+data_encoding="br"
+seed=42
 data_dir="/home/u0052/datasets/alyx"
+mode="multirun"
 
-./run-exp-slurm "$model_name" "$data_encoding" "$data_dir"
+if [[ "$mode" == "multirun" ]]; then
+
+  #WARN: Hard coded list of seed values changed to 2,42 in run-multi-exp-slurm, re change it
+  ./run-multi-exp-slurm "$model_name" "$data_encoding" "$data_dir"
+
+else
+
+  ./run-exp-slurm "$model_name" "$data_encoding" $seed "$data_dir"
+
+fi
+

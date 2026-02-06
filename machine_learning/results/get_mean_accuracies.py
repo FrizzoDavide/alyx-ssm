@@ -36,6 +36,7 @@ def main(config: DictConfig):
         utils.print_config(config, resolve=True)
 
     results_dirpath = utils.get_results_path(config=config)
+
     acc_dfs, acc_vals = [], []
 
     for run in range(config.n_runs):

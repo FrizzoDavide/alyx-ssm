@@ -53,6 +53,7 @@ multirun: True
 n_runs: 3
 run_number: 0
 strategy: "mean_accuracy"
-file_pos: 0
+day_file_pos: 0
+hour_file_pos: 0
 
 # path_to_model: "/home/davide_frizzo/alyx-ssm/machine_learning/outputs/2026-02-04/TCN_bra_big_seed_42/checkpoints/best_mean_accuracy_val-epoch_001.ckpt"

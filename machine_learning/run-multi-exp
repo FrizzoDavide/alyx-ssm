@@ -45,6 +45,7 @@ case "$mode" in
       +experiments/who_is_alyx="$config_file" \
       seed=1,2,42 \
       run_number=0,1,2 \
+      day_file_pos=1 \
       data_dir="$data_dir"
 
   ;;

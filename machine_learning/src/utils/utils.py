@@ -283,6 +283,11 @@ def get_results_path(config: DictConfig) -> str:
 
     ml_path = Path(Path.home() / "alyx-ssm" / "machine_learning")
 
+    #WARN: Hardcoded the path in acquario4 → not very elegant
+
+    if not os.path.exists(ml_path):
+        ml_path = Path(Path.home() / "davide_frizzo" / "alyx-ssm" / "machine_learning")
+
     outputs_path = os.path.join(ml_path,"multirun") if config.multirun else os.path.join(ml_path,"outputs")
 
     model_enc_dirpath = os.path.join(outputs_path,config.model_name,config.data_encoding)
