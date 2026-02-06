@@ -157,3 +157,6 @@ tmp/
 data/
 _job_configs/
 lightning_logs/
+
+# csv files
+*.csv
