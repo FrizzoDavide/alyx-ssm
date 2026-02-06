@@ -86,7 +86,10 @@ if args.show_plot:
     fig.show()
 
 if args.save_plot:
-    filename = f"{utils.get_current_time()}_blob_plot_no_mlp.png"
+    if args.remove_mlp:
+        filename = f"{utils.get_current_time()}_blob_plot_no_mlp.png"
+    else:
+        filename = f"{utils.get_current_time()}_blob_plot_with_mlp.png"
     plot_path = os.path.join(plot_path, filename)
     fig.write_image(plot_path, scale=1)
     print("-" * 50)
