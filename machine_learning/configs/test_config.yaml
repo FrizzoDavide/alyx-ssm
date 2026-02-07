@@ -47,7 +47,7 @@ seed: 42
 
 # parameters to automatically compute the model checkpoint path
 
-model_name: "tcn"
+model_name: "transformer"
 data_encoding: "br"
 multirun: True
 n_runs: 3

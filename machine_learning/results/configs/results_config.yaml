@@ -1,7 +1,7 @@
 #NOTE: results script config
 
 model_name: "transformer"
-data_encoding: "bra"
+data_encoding: "br"
 
 print_config: False
 multirun: True
