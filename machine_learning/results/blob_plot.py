@@ -57,7 +57,7 @@ blob_df = blob_df.rename(
     columns = {
         "params":"Parameters (M)",
         "accs":"Sample Accuracy",
-        "flops": "FLOPs"
+        "flops": "GFLOPs"
     }
 )
 
@@ -68,8 +68,8 @@ fig = px.scatter(
     data_frame=blob_df,
     x="Parameters (M)",
     y="Sample Accuracy",
-    color="FLOPs",
-    size="FLOPs",
+    color="GFLOPs",
+    size="GFLOPs",
     hover_name="model_name",
     log_x=True,
     size_max=60,
